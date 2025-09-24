@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Fake Data Generator</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 20px;
+            max-width: 900px;
+        }
+
+        h2 {
+            margin-bottom: 1em;
+        }
+
+        form > label,
+        .field-checkbox {
+            display: block;
+            margin-bottom: 0.5em;
+        }
+
+        input[type="number"], select {
+            padding: 5px;
+            width: 200px;
+        }
+
+        .field-checkbox {
+            display: inline-block;
+            margin-right: 10px;
+        }
+
+        button {
+            margin-top: 1em;
+            padding: 6px 12px;
+        }
+
+        table {
+            width: 100%;
+            border: 1px solid #ccc;
+            margin-top: 20px;
+            font-size: 14px;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid #ccc;
+            padding: 5px 8px;
+            text-align: left;
+        }
+
+        th {
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+<h2>Fake Data Generator</h2>
+
+<form action="generate" method="post">
+    <label>
+        Amount of records
+        <input type="number" name="quantity" min="1" max="1000" th:value="${quantity}">
+    </label>
+
+    <label>
+        Language
+        <select name="language">
+            <option th:each="lang : ${languages}" th:value="${lang}"
+                    th:text="${lang}" th:selected="${lang == language}"></option>
+        </select>
+    </label>
+
+    <label>Additional fields</label>
+    <div>
+        <div class="field-checkbox" th:each="field : ${fields}">
+            <input type="checkbox" name="selectedFields"
+                   th:value="${field}"
+                   th:checked="${selectedFields != null and selectedFields.contains(field.toLowerCase())}">
+            <label th:text="${field}"></label>
+        </div>
+    </div>
+
+    <button type="submit">Generate</button>
+</form>
+
+<div th:if="${people}">
+    <table>
+        <thead>
+        <tr>
+            <th th:text="${translations['firstname']}">First name</th>
+            <th th:text="${translations['lastname']}">Last name</th>
+            <th th:text="${translations['birthdate']}">Date of birth</th>
+            <th th:each="field : ${selectedFields}"
+                th:text="${translations[field.toLowerCase()]} ?: ${field}">Field</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="person : ${people.people}">
+            <td th:text="${person.firstName}"></td>
+            <td th:text="${person.lastName}"></td>
+            <td th:text="${person.birthDate}"></td>
+            <td th:each="field : ${selectedFields}">
+                <span th:switch="${field}">
+                    <span th:case="'address'" th:text="${person.address}"></span>
+                    <span th:case="'university'" th:text="${person.university}"></span>
+                    <span th:case="'country'" th:text="${person.country}"></span>
+                    <span th:case="'bloodtype'" th:text="${person.bloodType}"></span>
+                    <span th:case="'phone'" th:text="${person.phone}"></span>
+                    <span th:case="'company'" th:text="${person.company}"></span>
+                    <span th:case="'email'" th:text="${person.email}"></span>
+                    <span th:case="'familystatus'" th:text="${person.familyStatus}"></span>
+                </span>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+</body>
+</html>
